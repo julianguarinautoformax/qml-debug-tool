@@ -1,22 +1,31 @@
 #ifndef PEEKABOOLIB_H
 #define PEEKABOOLIB_H
-#include <QObject>
-#include "peek-a-boo-lib_global.h"
 
+#include <QQuickItem>
+#include <QColor>
+#include <QJSValue>
 
-class PEEKABOOLIBSHARED_EXPORT Peekaboolib:public QObject
+class Peekaboolib:public QQuickItem
 {
-    typedef void(*PeekABooCBack)(QtMsgType,const QMessageLogContext &,const QString &);
     Q_OBJECT
-
-private:
-    PeekABooCBack m_PeekABooCallBack;
-    static void defaultCallBack(QtMsgType,const QMessageLogContext &,const QString &);
-
+    Q_DISABLE_COPY(Peekaboolib)
+    /*Q_PROPERTY(QJSValue dbgView READ dbgView)
+    Q_PROPERTY(QJSValue dbgModel READ dbgModel)*/
+    
 public:
-    Peekaboolib(PeekABooCBack, QObject * parent = Q_NULLPTR);
-    Peekaboolib(QObject * parent = Q_NULLPTR);
+    Peekaboolib(QQuickItem * parent = 0);
+    Q_INVOKABLE void aTest();
+    
+private:
+    
+    static void defaultCallBack(QtMsgType,const QMessageLogContext &,const QString &);
+    /*QJSValue dbgModel;
+    QJSValue dbgView;*/
+signals:
+    void debugMessage(QString aColor, QString aString);
+    
     
 };
+extern Peekaboolib * pecker;
 
 #endif // PEEKABOOLIB_H
