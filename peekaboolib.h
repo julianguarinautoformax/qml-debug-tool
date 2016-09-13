@@ -9,18 +9,20 @@ class Peekaboolib:public QQuickItem
 {
     Q_OBJECT
     Q_DISABLE_COPY(Peekaboolib)
-    /*Q_PROPERTY(QJSValue dbgView READ dbgView)
-    Q_PROPERTY(QJSValue dbgModel READ dbgModel)*/
-    
+    Q_PROPERTY(bool stdVersion READ stdVersion WRITE setStdVersion)
 public:
     Peekaboolib(QQuickItem * parent = 0);
     Q_INVOKABLE void aTest();
     
+    bool stdVersion();
+    void setStdVersion(bool);
+
+    
 private:
     
     static void defaultCallBack(QtMsgType,const QMessageLogContext &,const QString &);
-    /*QJSValue dbgModel;
-    QJSValue dbgView;*/
+    bool m_std;    
+
 signals:
     void debugMessage(QString aColor, QString aString);
     

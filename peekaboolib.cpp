@@ -1,38 +1,49 @@
 
 #include "peekaboolib.h"
 #include <QDebug>
-
+#include <QFileInfo>
 Peekaboolib * pecker = 0x0;
 
+QString formatContextFile(const char * file){
+    
+    QString aFile(file);
+    QFileInfo aFileInfo(aFile);
+    return aFileInfo.fileName();
+    
+}
+
+QString formatContextFunction(const char * function){
+    
+    QString aFunction(function);
+    QStringList aFunctionSignatureSplitted(aFunction.split("::"));
+    aFunction = aFunctionSignatureSplitted[aFunctionSignatureSplitted.count()-1];
+    QStringList aFunctionSplitted(aFunction.split("("));
+    return aFunctionSplitted[0];
+}
+
 void Peekaboolib::defaultCallBack(QtMsgType type, const QMessageLogContext &context,const QString & msg){
+    
     QByteArray localMsg = msg.toLocal8Bit();
     QColor aColor;
     QString aString;
+    aString = QString("[%2:%3, %4]: %1\n").arg(localMsg.constData()).arg(formatContextFile(context.file)).arg(QString::number(context.line)).arg(formatContextFunction(context.function));
+    if (pecker->stdVersion()) fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+    
     QString aColorName;
        switch (type) {
        case QtDebugMsg:
-           aString = QString("[%2:%3, %4]: %1\n").arg(localMsg.constData()).arg(context.file).arg(QString::number(context.line)).arg(context.function);
-           fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
            aColor = Qt::green;
            break;
        case QtInfoMsg:
-           aString = QString("[%2:%3, %4]: %1\n").arg(localMsg.constData()).arg(context.file).arg(QString::number(context.line)).arg(context.function);
-           fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
            aColor = Qt::cyan;
            break;
        case QtWarningMsg:
-           aString = QString("[%2:%3, %4]: %1\n").arg(localMsg.constData()).arg(context.file).arg(QString::number(context.line)).arg(context.function);
-           fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
            aColor = Qt::yellow;
            break;
        case QtCriticalMsg:
-           aString = QString("[%2:%3, %4]: %1\n").arg(localMsg.constData()).arg(context.file).arg(QString::number(context.line)).arg(context.function);
-           fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
            aColor = Qt::red;
            break;
        case QtFatalMsg:
-           aString = QString("[%2:%3, %4]: %1\n").arg(localMsg.constData()).arg(context.file).arg(QString::number(context.line)).arg(context.function);
-           fprintf(stderr, "%s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
            aColor = Qt::magenta;
            abort();
        }
@@ -41,7 +52,7 @@ void Peekaboolib::defaultCallBack(QtMsgType type, const QMessageLogContext &cont
 }
 
 Peekaboolib::Peekaboolib(QQuickItem* parent):
-    QQuickItem(parent){
+    QQuickItem(parent),m_std(true){
     
     qDebug()<<"I'm installing a QDebug handler new";
     qInstallMessageHandler(defaultCallBack);
@@ -56,4 +67,11 @@ void Peekaboolib::aTest(){
     qCritical("A Critical Message.");
 
 }
+bool Peekaboolib::stdVersion(){
+    return m_std;
+}
+void Peekaboolib::setStdVersion(bool value){
+    m_std = value;
+}
+
 

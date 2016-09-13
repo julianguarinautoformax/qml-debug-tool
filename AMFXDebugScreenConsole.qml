@@ -4,9 +4,11 @@ Item {
     id:root        
     anchors.fill: parent
     property int maxlines: 20
-
+    property int fontPixelSize: 8
+    property bool welcomeMessageEnabled: true
+    property string welcomeMessage: "Hello this is ax demonstration of your debugger..... enjoy!"
     Component.onCompleted: {
-        console.log("Hello this is ax demonstration of your debugger..... enjoy!")
+        if (root.welcomeMessageEnabled) console.log(welcomeMessage)
     }
 
     ListModel{
@@ -23,10 +25,12 @@ Item {
             Rectangle{
                 anchors.fill:parent
                 color:"#00000000"
+                opacity: parent.y / root.height
                 Text {
                     anchors.fill: parent
                     text:debugMessage
                     color:textColor
+                    font.pixelSize: root.fontPixelSize
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignVCenter
                 }
